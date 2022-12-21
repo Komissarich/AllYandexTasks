@@ -1,13 +1,12 @@
 import os
 import sys
-
+import random
 import pygame
 
 pygame.init()
-size = width, height = 600, 95
+size = width, height = 500, 500
 screen = pygame.display.set_mode(size)
 pygame.display.flip()
-screen.fill((255, 255, 255))
 
 
 def load_image(name, colorkey=None):
@@ -31,45 +30,62 @@ def load_image(name, colorkey=None):
 all_sprites = pygame.sprite.Group()
 
 
-class Car(pygame.sprite.Sprite):
+class Bomb(pygame.sprite.Sprite):
     def __init__(self, name):
         super().__init__()
-
-        self.image = load_image(name)
+        a = load_image(name)
+        a1 = pygame.transform.scale(a, (100, 100))
+        self.image = a1
         self.rect = self.image.get_rect()
 
-    def moving(self, direction1):
-        if direction1:
-            self.rect.x += 1
-        else:
-            self.rect.x -= 1
+        self.boomed = False
+
+    def change_img(self):
+        if self.boomed is not True:
+            self.boomed = True
+            x = self.rect.x
+            y = self.rect.y
+            all_sprites.remove(self)
+
+            b = load_image("img_1.png")
+            self.image = b
+            bombs_sprites.add(self)
+            all_sprites.update()
+            bombs_sprites.update()
+            all_sprites.draw(screen)
+            bombs_sprites.draw(screen)
 
 
-a = "img.png"
 
-car = Car(a)
-all_sprites.add(car)
 
-direction = True
+bombs_sprites = pygame.sprite.Group()
+bombs = []
+for i in range(20):
+    x = random.randrange(10, 400)
+    y = random.randrange(10, 400)
+    boom = Bomb("img.png")
+    boom.rect.x = x
+    boom.rect.y = y
+    bombs.append(boom)
+    all_sprites.add(boom)
 
-pygame.display.flip()
-fps = 50
-v = 60
-clock = pygame.time.Clock()
 running = True
 while running:
-    all_sprites.draw(screen)
+    screen.fill((0, 0, 0))
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-    if car.rect.x > 455:
-        direction = False
-    if car.rect.x < 10:
-        direction = True
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            pos = pygame.mouse.get_pos()
+            clicked_sprites = [s for s in bombs if s.rect.collidepoint(pos)]
+            for i in clicked_sprites:
+                i.change_img()
 
-    car.moving(direction)
+    all_sprites.update()
+    all_sprites.draw(screen)
+    bombs_sprites.update()
+    bombs_sprites.draw(screen)
 
-    pygame.display.update()
-    screen.fill((255, 255, 255))
 
-    clock.tick(fps)
+    pygame.display.flip()
+
