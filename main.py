@@ -36,12 +36,18 @@ class Car(pygame.sprite.Sprite):
         super().__init__()
 
         self.image = load_image(name)
+
         self.rect = self.image.get_rect()
+        self.car_right = self.image
+        self.car_left = pygame.transform.flip(self.car_right, True, False)
 
     def moving(self, direction1):
+
         if direction1:
+            self.image = self.car_right
             self.rect.x += 1
         else:
+            self.image = self.car_left
             self.rect.x -= 1
 
 
