@@ -1,45 +1,65 @@
 import pygame
 
 pygame.init()
-coords = []
-st1 = open('points.txt', encoding='utf8')
-a = 0
-b, c = 0, 0
-st2 = st1.readlines()
-for _ in st2:
-    a = _
-for i in range(len(a)):
-    if a[i] == '(':
-        b = i
-    if a[i] == ')':
-        c = i
-        line = a[b + 1: c].split(';')
-        if ',' in line[0]:
-            line[0] = line[0].replace(',', '.')
-        if ',' in line[1]:
-            line[1] = line[1].replace(',', '.')
-        coords.append([(float(line[0])), (float(line[1]))])
-        b, c = 0, 0
-size = width, height = 501, 501
+size = 500, 500
 screen = pygame.display.set_mode(size)
-white = pygame.Color('white')
-black = pygame.Color('black')
-k = 1
-coords1 = []
-running = True
+pygame.display.set_caption('Координаты клетки')
 
+
+class Board:
+    def __init__(self, width, height):
+        self.width = width
+        self.height = height
+        self.board = [[1] * width for _ in range(height)]
+        self.left = 10
+        self.top = 10
+        self.cell_size = 30
+
+    def render(self):
+        for y in range(self.height):
+            for x in range(self.width):
+                pygame.draw.rect(screen, pygame.Color(255, 255, 255), (
+                    x * self.cell_size + self.left, y * self.cell_size + self.top, self.cell_size, self.cell_size),
+                                 self.board[y][x])
+
+    def set_view(self, left, top, cell_size):
+        self.left = left
+        self.top = top
+        self.cell_size = cell_size
+
+    def on_click(self, cell_coords):
+        for x in range(self.height):
+            self.board[x][cell_coords[1]] = (self.board[x][cell_coords[1]] + 1) % 2
+        for y in range(self.width):
+            self.board[cell_coords[0]][y] = (self.board[cell_coords[0]][y] + 1) % 2
+        self.board[cell_coords[0]][cell_coords[1]] = (self.board[cell_coords[0]][cell_coords[1]] + 1) % 2
+
+    def get_cell(self, mouse_pos):
+        if self.left <= mouse_pos[1] < self.left + self.height * self.cell_size and self.top <= mouse_pos[
+            0] < self.top + self.width * self.cell_size:
+            return (int((mouse_pos[1] - self.left) / self.cell_size), int((mouse_pos[0] - self.top) / self.cell_size))
+        else:
+            return None
+
+    def get_click(self, mouse_pos):
+        cell = self.get_cell(mouse_pos)
+        if cell != None:
+            self.on_click(cell)
+        if cell == None:
+            print(cell)
+
+
+board = Board(5, 7)
+board.set_view(100, 100, 50)
+
+running = True
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-        if event.type == pygame.MOUSEBUTTONUP and event.button == 4:
-            k *= 2
-        if event.type == pygame.MOUSEBUTTONUP and event.button == 5:
-            k /= 2
-    for i in coords:
-        x, y = i[1], i[0]
-        coords1.append([float(x * k + 250.5), float(y * k + 250.5)])
-    screen.fill(black)
-    pygame.draw.polygon(screen, white, coords1, 1)
-    coords1 = []
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            board.get_click(event.pos)
+    screen.fill((0, 0, 0))
+    board.render()
     pygame.display.flip()
+pygame.quit()
