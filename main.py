@@ -1,65 +1,65 @@
 import pygame
 
-pygame.init()
-size = 500, 500
-screen = pygame.display.set_mode(size)
-pygame.display.set_caption('Координаты клетки')
-
 
 class Board:
     def __init__(self, width, height):
         self.width = width
         self.height = height
-        self.board = [[1] * width for _ in range(height)]
+
         self.left = 10
         self.top = 10
         self.cell_size = 30
-
-    def render(self):
-        for y in range(self.height):
-            for x in range(self.width):
-                pygame.draw.rect(screen, pygame.Color(255, 255, 255), (
-                    x * self.cell_size + self.left, y * self.cell_size + self.top, self.cell_size, self.cell_size),
-                                 self.board[y][x])
+        self.a = 0
+        self.colors = [[255, 255, 255], [255, 0, 0], [0, 0, 255]]
+        self.board = [[self.colors[0]] * width for _ in range(height)]
+        print(self.board)
 
     def set_view(self, left, top, cell_size):
         self.left = left
         self.top = top
         self.cell_size = cell_size
 
-    def on_click(self, cell_coords):
-        for x in range(self.height):
-            self.board[x][cell_coords[1]] = (self.board[x][cell_coords[1]] + 1) % 2
-        for y in range(self.width):
-            self.board[cell_coords[0]][y] = (self.board[cell_coords[0]][y] + 1) % 2
-        self.board[cell_coords[0]][cell_coords[1]] = (self.board[cell_coords[0]][cell_coords[1]] + 1) % 2
-
-    def get_cell(self, mouse_pos):
-        if self.left <= mouse_pos[1] < self.left + self.height * self.cell_size and self.top <= mouse_pos[
-            0] < self.top + self.width * self.cell_size:
-            return (int((mouse_pos[1] - self.left) / self.cell_size), int((mouse_pos[0] - self.top) / self.cell_size))
-        else:
-            return None
-
-    def get_click(self, mouse_pos):
-        cell = self.get_cell(mouse_pos)
-        if cell != None:
-            self.on_click(cell)
-        if cell == None:
-            print(cell)
+    def changecolor(self, x, y):
+        self.a += 1
+        for y1 in range(self.height):
+            for x1 in range(self.width):
+                if x1 == x and y1 == y:
+                    self.board[y1][x1] = self.colors[self.a % 3]
 
 
+    def render(self, screen):
+
+        for y1 in range(self.height):
+            for x1 in range(self.width):
+                if self.board[y1][x1] == [255, 255, 255]:
+                    pygame.draw.rect(screen, pygame.Color(255, 255, 255), (
+                        x1 * self.cell_size + self.left, y1 * self.cell_size + self.top, self.cell_size,
+                        self.cell_size), 1)
+                else:
+                    pygame.draw.rect(screen, tuple(self.board[y1][x1]), (
+                        x1 * self.cell_size + self.left, y1 * self.cell_size + self.top, self.cell_size,
+                        self.cell_size))
+
+
+
+
+pygame.init()
+screen = pygame.display.set_mode((300, 300))
 board = Board(5, 7)
-board.set_view(100, 100, 50)
-
 running = True
+
 while running:
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            board.get_click(event.pos)
-    screen.fill((0, 0, 0))
-    board.render()
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            x, y = event.pos
+            x = round((x - 10) // 30)
+            y = round((y - 10) // 30)
+            screen.fill((0, 0, 0))
+            board.changecolor(x, y)
+
+
+    board.render(screen)
     pygame.display.flip()
-pygame.quit()
