@@ -1,64 +1,45 @@
-import os
-import sys
-
 import pygame
 
-
 pygame.init()
-size = width, height = 600, 300
+coords = []
+st1 = open('points.txt', encoding='utf8')
+a = 0
+b, c = 0, 0
+st2 = st1.readlines()
+for _ in st2:
+    a = _
+for i in range(len(a)):
+    if a[i] == '(':
+        b = i
+    if a[i] == ')':
+        c = i
+        line = a[b + 1: c].split(';')
+        if ',' in line[0]:
+            line[0] = line[0].replace(',', '.')
+        if ',' in line[1]:
+            line[1] = line[1].replace(',', '.')
+        coords.append([(float(line[0])), (float(line[1]))])
+        b, c = 0, 0
+size = width, height = 501, 501
 screen = pygame.display.set_mode(size)
-
-
-def load_image(name, colorkey=None):
-    fullname = os.path.join('data', name)
-
-    if not os.path.isfile(fullname):
-
-        sys.exit()
-    image = pygame.image.load(fullname)
-    if colorkey is not None:
-        image = image.convert()
-        if colorkey == -1:
-            colorkey = image.get_at((0, 0))
-        image.set_colorkey(colorkey)
-    else:
-        image = image.convert_alpha()
-    return image
-
-all_sprites = pygame.sprite.Group()
-
-
-class End_Screen(pygame.sprite.Sprite):
-    def __init__(self, name):
-        super().__init__()
-
-        self.image = load_image(name)
-        self.rect = self.image.get_rect()
-        self.rect.x = -400
-
-
-
-
-screen1 = End_Screen("img.png")
-all_sprites.add(screen1)
-
-direction = True
-
-pygame.display.flip()
-
-v = 200
-clock = pygame.time.Clock()
+white = pygame.Color('white')
+black = pygame.Color('black')
+k = 1
+coords1 = []
 running = True
+
 while running:
-    all_sprites.draw(screen)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-
-    if screen1.rect.x < 0:
-        screen1.rect.x += v * clock.tick() / 1000
-
-    pygame.display.update()
-
-    screen.fill((255, 255, 255))
-
+        if event.type == pygame.MOUSEBUTTONUP and event.button == 4:
+            k *= 2
+        if event.type == pygame.MOUSEBUTTONUP and event.button == 5:
+            k /= 2
+    for i in coords:
+        x, y = i[1], i[0]
+        coords1.append([float(x * k + 250.5), float(y * k + 250.5)])
+    screen.fill(black)
+    pygame.draw.polygon(screen, white, coords1, 1)
+    coords1 = []
+    pygame.display.flip()
