@@ -51,7 +51,7 @@ class Car(pygame.sprite.Sprite):
             self.rect.x -= 1
 
 
-a = "img.png"
+a = "car2.png"
 
 car = Car(a)
 all_sprites.add(car)
