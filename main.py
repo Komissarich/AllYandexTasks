@@ -47,7 +47,7 @@ class Bomb(pygame.sprite.Sprite):
             y = self.rect.y
             all_sprites.remove(self)
 
-            b = load_image("img_1.png")
+            b = load_image("boom.png")
             self.image = b
             bombs_sprites.add(self)
             all_sprites.update()
@@ -63,7 +63,7 @@ bombs = []
 for i in range(20):
     x = random.randrange(10, 400)
     y = random.randrange(10, 400)
-    boom = Bomb("img.png")
+    boom = Bomb("bomb.png")
     boom.rect.x = x
     boom.rect.y = y
     bombs.append(boom)
