@@ -39,7 +39,7 @@ class End_Screen(pygame.sprite.Sprite):
 
 
 
-screen1 = End_Screen("img.png")
+screen1 = End_Screen("gameover.png")
 all_sprites.add(screen1)
 
 direction = True
