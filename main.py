@@ -7,7 +7,7 @@ import pygame
 pygame.init()
 size = width, height = 600, 300
 screen = pygame.display.set_mode(size)
-
+screen.fill((0, 0, 255))
 
 def load_image(name, colorkey=None):
     fullname = os.path.join('data', name)
@@ -60,5 +60,5 @@ while running:
 
     pygame.display.update()
 
-    screen.fill((255, 255, 255))
+    screen.fill((0, 0, 255))
 
