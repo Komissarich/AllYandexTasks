@@ -1,4 +1,4 @@
-#НЕ ПРОВЕРЯЙТЕ
+# НЕ ПРОВЕРЯТЬ
 import os
 import sys
 
@@ -8,7 +8,7 @@ pygame.init()
 size = width, height = 300, 300
 screen = pygame.display.set_mode(size)
 pygame.display.flip()
-screen.fill((0, 0, 0))
+screen.fill((255, 255, 255))
 
 
 def load_image(name, colorkey=None):
@@ -47,13 +47,13 @@ class Car(pygame.sprite.Sprite):
         self.rect.y += direction[1]
 
 
-a = "arrow.png"
+a = "creature.png"
 
 car = Car(a)
 all_sprites.add(car)
 
 directions = [[10, 0], [-10, 0], [0, 10], [0, -10]]
-
+print(directions[1])
 pygame.display.flip()
 fps = 50
 v = 60
@@ -65,14 +65,16 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+        if keys[pygame.K_LEFT]:
+            car.moving(directions[1])
+        if keys[pygame.K_RIGHT]:
+            car.moving(directions[0])
+        if keys[pygame.K_UP]:
+            car.moving(directions[3])
+        if keys[pygame.K_DOWN]:
+            car.moving(directions[2])
 
-    if pygame.mouse.get_focused():
-        pygame.mouse.set_visible(False)
-        car.rect.x = pygame.mouse.get_pos()[0]
-        car.rect.y = pygame.mouse.get_pos()[1]
-    else:
-        pygame.mouse.set_visible(True)
     pygame.display.update()
-    screen.fill((0, 0, 0))
+    screen.fill((255, 255, 255))
 
     clock.tick(fps)
