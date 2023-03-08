@@ -10,8 +10,31 @@ def a():
 
 @app.route('/index/<letter>')
 def index(letter):
-    return render_template('base.html', title= letter)
+    return render_template('base.html', title=letter)
 
+
+@app.route('/list_prof/<param>')
+def list_prof(param):
+    if param == "ol":
+        return render_template('ol.html')
+    elif param == "ul":
+        return render_template('ul.html')
+    else:
+        print("WRONG PARAMETER")
+        return render_template('error.html')
+
+
+@app.route('/training/<specialization>')
+def prof(specialization):
+    if 'инженер' in specialization:
+        return render_template('prof.html', title=specialization, prof='Инженерный симулятор',
+                               path="/static/img/eng.jpg")
+    elif 'строитель' in specialization:
+        return render_template('prof.html', title=specialization, prof="Строительный симулятор",
+                               path="/static/img/builder.jpg")
+    else:
+        return render_template('prof.html', title=specialization, prof="Научный симулятор",
+                               path="/static/img/science.jpg")
 
 
 if __name__ == '__main__':
