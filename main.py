@@ -2,7 +2,7 @@ from flask import Flask, url_for, request, render_template, redirect
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField
 from wtforms.validators import DataRequired
-
+import sys
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 
@@ -18,17 +18,11 @@ def a():
     return "Миссия Колонизация Марса"
 
 
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    form = LoginForm()
-    if form.validate_on_submit():
-        return redirect('/success')
-    return render_template('autonom.html', title='Авторизация', form=form)
+@app.route('/distribution')
+def distribution():
+    data = list(map(str.strip, sys.stdin))
+    return render_template('distribution.html', user_list = data)
 
-
-@app.route('/b')
-def b():
-    return "fsaedaefawdxcfsfvcbv"
 
 
 @app.route('/success')

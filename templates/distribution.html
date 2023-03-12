@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+        <h1>Размещение по каютам</h1>
+        <ul>
+            {% for user in user_list %}
+            {%set cabin = "Каюта №" + loop.index|string%}
+            {% if loop.first%}
+                <div>{% set cabin = "Каюта № " + loop.index|string + " " +  "-" + " " + "капитан корабля"%}</div>
+            {% endif %}
+            <li>{{ user }} - {{ cabin }}
+            </li>
+            {% endfor %}
+        </ul>
+{% endblock %}
