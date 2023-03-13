@@ -25,6 +25,24 @@ def distribution():
 
 
 
+@app.route('/table/<sex>/<int:age>')
+def page(sex, age):
+    path = ""
+    if sex == "female":
+        color = [str(age * 10), '0',  '0']
+    else:
+        color = ['0', '0', str(age * 10)]
+    if age >= 21:
+        path = "/static/img/elder.png"
+    else:
+        path = "/static/img/small.jpg"
+    #"rgb(210, 0, 0)"
+    color = ", ".join(color)
+    a = f'rgb({color})'
+    print(a)
+    return render_template("table.html", colored= a, path = path)
+
+
 @app.route('/success')
 def succes():
     return "Успешно"
