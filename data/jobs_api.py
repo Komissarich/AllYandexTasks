@@ -10,17 +10,17 @@ blueprint = flask.Blueprint(
 )
 
 
-@blueprint.route('/api/jobs')
-def get_news():
+@blueprint.route('/api/jobs/<int:job_id>')
+def get_news(job_id):
     print(1)
     db_sess = db_session.create_session()
-    news = db_sess.query(Jobs).all()
-
+    news = db_sess.query(Jobs).get(job_id)
+    if not news:
+        return flask.jsonify({'error': 'Not found'})
     return flask.jsonify(
         {
-            'jobs':
-                [item.to_dict(only=('id', 'name', 'work_size', 'collaborators'))
-                 for item in news]
+            'jobs': news.to_dict(only=(
+                'id', 'name', 'work_size', 'collaborators'))
         }
     )
 
