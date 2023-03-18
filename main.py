@@ -1,81 +1,82 @@
-import os
-import sys
-
-import pygame
-
-pygame.init()
-size = width, height = 600, 95
-screen = pygame.display.set_mode(size)
-pygame.display.flip()
-screen.fill((255, 255, 255))
+from flask import Flask
+from data import db_session
+from data.users import User
+app = Flask(__name__)
+app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 
 
-def load_image(name, colorkey=None):
-    fullname = os.path.join('data', name)
+from requests import get
 
-    if not os.path.isfile(fullname):
-        print(f"Файл с изображением '{fullname}' не найден")
-        sys.exit()
+def main():
 
-    image = pygame.image.load(fullname)
-    if colorkey is not None:
-        image = image.convert()
-        if colorkey == -1:
-            colorkey = image.get_at((0, 0))
-        image.set_colorkey(colorkey)
-    else:
-        image = image.convert_alpha()
-    return image
+    db_session.global_init("db/blogs.db")
+
+    add_jobs()
+
+    app.run()
+   
 
 
-all_sprites = pygame.sprite.Group()
 
 
-class Car(pygame.sprite.Sprite):
-    def __init__(self, name):
-        super().__init__()
+def add_jobs():
 
-        self.image = load_image(name)
+    job = User()
+    job.surname = "Scott"
+    job.name = "Ridley"
+    job.age = 21
+    job.position = "Captain"
+    job.speciality = "research engineer"
+    job.address = "module_1"
+    job.email = "scott_chief @ mars.org"
 
-        self.rect = self.image.get_rect()
-        self.car_right = self.image
-        self.car_left = pygame.transform.flip(self.car_right, True, False)
+    db_sess = db_session.create_session()
+    db_sess.add(job)
+    db_sess.commit()
 
-    def moving(self, direction1):
+    job = User()
+    job.surname = "Egor"
+    job.name = "Popov"
+    job.age = 17
+    job.position = "Loh"
+    job.speciality = "engineer"
+    job.address = "module_2"
+    job.email = "scott_egor @ mars.org"
 
-        if direction1:
-            self.image = self.car_right
-            self.rect.x += 1
-        else:
-            self.image = self.car_left
-            self.rect.x -= 1
+    db_sess = db_session.create_session()
+    db_sess.add(job)
+    db_sess.commit()
+
+    job = User()
+    job.surname = "Askar"
+    job.name = "Kasimov"
+    job.age = 17
+    job.position = "Manager"
+    job.speciality = "noname"
+    job.address = "module_3"
+    job.email = "scott_askar @ mars.org"
 
 
-a = "car2.png"
+    db_sess = db_session.create_session()
+    db_sess.add(job)
+    db_sess.commit()
 
-car = Car(a)
-all_sprites.add(car)
+    job = User()
+    job.surname = "Danil"
+    job.name = "Mitroshin"
+    job.age = 17
+    job.position = "Designer"
+    job.speciality = "idk"
+    job.address = "module_4"
+    job.email = "scott_danil @ mars.org"
+    db_sess = db_session.create_session()
+    db_sess.add(job)
+    db_sess.commit()
 
-direction = True
 
-pygame.display.flip()
-fps = 50
-v = 60
-clock = pygame.time.Clock()
-running = True
-while running:
-    all_sprites.draw(screen)
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-    if car.rect.x > 455:
-        direction = False
-    if car.rect.x < 10:
-        direction = True
 
-    car.moving(direction)
 
-    pygame.display.update()
-    screen.fill((255, 255, 255))
 
-    clock.tick(fps)
+
+if __name__ == '__main__':
+    main()
