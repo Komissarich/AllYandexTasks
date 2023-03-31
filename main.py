@@ -1,19 +1,39 @@
-from flask import Flask
+from flask import Flask, render_template, url_for, request
 from data import db_session
+from data.jobs import Jobs
 from data.users import User
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 
+from flask_wtf import FlaskForm
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, IntegerField
+from wtforms.validators import DataRequired
 
-from requests import get
-
+class LoginForm(FlaskForm):
+    login = StringField('Login/email', validators=[DataRequired()])
+    password = PasswordField('Password', validators=[DataRequired()])
+    repeat_password = PasswordField('Repeat Password', validators=[DataRequired()])
+    surname = StringField('Surname', validators=[DataRequired()])
+    name = StringField('Name', validators=[DataRequired()])
+    age = IntegerField('Age', validators=[DataRequired()])
+    position = StringField('Position', validators=[DataRequired()])
+    speciality = StringField('Speciality', validators=[DataRequired()])
+    address = StringField('Address', validators=[DataRequired()])
+    submit = SubmitField('Submit')
+    
+    
 def main():
 
-    db_session.global_init("db/blogs.db")
+    #db_session.global_init("db/blogs.db")
 
-    add_jobs()
-
-    app.run()
+   # add_jobs()
+   app.run()
+   # x = input("Введите бд")
+   # print(x)
+  #  db_session.global_init(x)
+ #   db_sess = db_session.create_session()
+   # for user in db_sess.query(User).all():
+    #    print(user)
    
 
 
@@ -21,14 +41,12 @@ def main():
 
 def add_jobs():
 
-    job = User()
-    job.surname = "Scott"
-    job.name = "Ridley"
-    job.age = 21
-    job.position = "Captain"
-    job.speciality = "research engineer"
-    job.address = "module_1"
-    job.email = "scott_chief @ mars.org"
+    job = Jobs()
+    job.team_lader = "1"
+    job.job = "deployment of residential modules 1 and 2"
+    job.work_size = 15
+    job.collaborators = "2, 3"
+    job.is_finished = False
 
     db_sess = db_session.create_session()
     db_sess.add(job)
@@ -75,6 +93,13 @@ def add_jobs():
 
 
 
+@app.route("/register")
+def register():
+    form = LoginForm()
+    if form.validate_on_submit():
+        return redirect('/success')
+    return render_template('register.html', form=form)
+    
 
 
 
